@@ -1,0 +1,71 @@
+CSIS 2430 — Example Project Plan (Plan + Trace)
+1) Project Information
+Course / Term CSIS 2430 
+Project Project 3
+Team CADD
+Start Date 2026-30-10
+Due Date 2026-15-11
+Checkpoint Date (mid-project) 2026-8-11
+  
+2) Team & Roles 
+Roles are assigned per project and rotate between projects.
+Team Members
+Implementation Lead Colin
+Verification Lead 
+Communications Lead David
+  
+3) Repository & Access 
+Platform GitHub
+Repository URL https://github.com/colinanyk/project_3
+Instructor invited as viewer by 
+Repo Structure Requirement Include /docs with Scope and Design Notes.
+
+
+Primary Responsibilities (1–2 bullets) Availability / Notes
+Creates test plan, edge cases. Colin
+Validates outputs, documents verification evidence. 
+Assembles report/video, tracks deliverables,  merges documentation. David
+
+
+4) Milestones (Timeline)
+Define 4–6 milestones. Each milestone has a definition of done. Status: NS / IP / D.
+Milestone Target Date Owner
+Repo set up + skeleton running 2026-30-10 Colin complete
+Core implementation NS
+Verification NS
+Change Order NS
+Report/video draft NS
+Final integration + submission NS
+
+
+5) Task Backlog (Assignments + Status)
+Keep this concise (8–15 tasks). For each Done task, include an evidence pointer.
+ID Task Owner Due Date
+1 Create repository + baseline README/run steps Lia 2026-30-10
+2 Draft Scope for core algorithm in /docs David 2026-2-11
+3 Draft Design Notes diagram in /docs David 2026-2-11
+4 Implement core data structures and parsing
+5 Define verification plan (tests + edge cases)
+6 Implement edge-case tests + expected outputs  
+7 Report draft (problem/design/verification/results) 
+8 Final polish: run instructions + release tag 
+
+6) Verification Plan (Verification Lead owns this section)
+Correctness checks / tests to run
+
+
+  7) Risks / Blockers
+Risk / Blocker Impact Mitigation Plan
+Scope creep (adding extra features) Med/High
+Integration conflicts / broken builds High/Med
+Freeze requirements after checkpoint; log “nice-to-haves” separately.
+Use PR reviews; merge small changes; run tests before merge.
+Unverified assumptions about input constraints
+Confirm constraints early; add explicit validation and tests.
+
+
+8) Update Log (Required: at least 2 per project)
+Date Summary of Update (what changed / what completed)
+2026-11-10 Repo created; baseline README; initial skeleton runs.
+2026-16-10 Design Notes and Scope drafted; 
+2026-18-10 Began core implementation; diagram draft
