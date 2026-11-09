@@ -11,19 +11,20 @@ Checkpoint Date (mid-project) 2026-8-11
 Roles are assigned per project and rotate between projects.
 Team Members
 Implementation Lead Colin
-Verification Lead 
+Verification Lead Dayanna
 Communications Lead David
+Anna Le Undefined Role as of 11/8/26
   
 3) Repository & Access 
 Platform GitHub
 Repository URL https://github.com/colinanyk/project_3
-Instructor invited as viewer by 
+Instructor invited as viewer by David
 Repo Structure Requirement Include /docs with Scope and Design Notes.
 
 
 Primary Responsibilities (1–2 bullets) Availability / Notes
 Creates test plan, edge cases. Colin
-Validates outputs, documents verification evidence. 
+Validates outputs, documents verification evidence. Dayanna
 Assembles report/video, tracks deliverables,  merges documentation. David
 
 
@@ -31,8 +32,8 @@ Assembles report/video, tracks deliverables,  merges documentation. David
 Define 4–6 milestones. Each milestone has a definition of done. Status: NS / IP / D.
 Milestone Target Date Owner
 Repo set up + skeleton running 2026-30-10 Colin complete
-Core implementation NS
-Verification NS
+Core implementation S Dayanna
+Verification S Dayanna
 Change Order NS
 Report/video draft NS
 Final integration + submission NS
@@ -41,11 +42,11 @@ Final integration + submission NS
 5) Task Backlog (Assignments + Status)
 Keep this concise (8–15 tasks). For each Done task, include an evidence pointer.
 ID Task Owner Due Date
-1 Create repository + baseline README/run steps Lia 2026-30-10
+1 Create repository + baseline README/run steps Colin 2026-30-10
 2 Draft Scope for core algorithm in /docs David 2026-2-11
 3 Draft Design Notes diagram in /docs David 2026-2-11
 4 Implement core data structures and parsing
-5 Define verification plan (tests + edge cases)
+5 Define verification plan (tests + edge cases) 2016-1-11 Dayanna
 6 Implement edge-case tests + expected outputs  
 7 Report draft (problem/design/verification/results) 
 8 Final polish: run instructions + release tag 
@@ -66,6 +67,6 @@ Confirm constraints early; add explicit validation and tests.
 
 8) Update Log (Required: at least 2 per project)
 Date Summary of Update (what changed / what completed)
-2026-11-10 Repo created; baseline README; initial skeleton runs.
-2026-16-10 Design Notes and Scope drafted; 
-2026-18-10 Began core implementation; diagram draft
+2026-30-10 Repo created; baseline README; initial skeleton runs.
+2026-2-11 Design Notes and Scope drafted; 
+2026-3-11 Began core implementation; diagram draft
