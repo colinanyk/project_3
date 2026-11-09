@@ -1,3 +1,9 @@
+/*
+ * Team name: CADD
+ * Team members: Colin Nykanen, Anna Le, David Arreola, Dayanna Porta Ayllon
+ * Course: CS 2430, section not specified (fill in before submission)
+ * Project: Programming Project 3 – Fall 2026
+ */
 package routines;
 
 import org.junit.jupiter.api.Test;
@@ -30,7 +36,6 @@ class ExperimentTest {
         assertEquals(name, experiment.getName());
     }
 
-    // The current constructor stores values without imposing validation rules.
     @ParameterizedTest
     @CsvSource({"0, 0", "700, 10", "701, 11", "-1, -1",
             "2147483647, 2147483647", "-2147483648, -2147483648"})
