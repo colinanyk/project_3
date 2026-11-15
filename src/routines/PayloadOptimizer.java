@@ -7,6 +7,7 @@
 package routines;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -78,7 +79,9 @@ public class PayloadOptimizer {
                 }
             }
             Payload payload = new Payload(selected);
-            if (payload.totalWeight() <= MAX_WEIGHT) {
+            int totalWeight = payload.totalWeight();
+            payload.totalRating();
+            if (totalWeight <= MAX_WEIGHT) {
                 validPayloads.add(payload);
             }
         }
@@ -87,6 +90,36 @@ public class PayloadOptimizer {
                 .thenComparingInt(Payload::totalWeight));
         return new ExhaustiveResult(subsetCount,
                 validPayloads.subList(0, Math.min(3, validPayloads.size())));
+    }
+
+    public Payload dynamicProgramming() {
+        int n = experiments.size();
+        int[][] dp = new int[n + 1][MAX_WEIGHT + 1];
+
+        for (int i = 1; i <= n; i++) {
+            Experiment experiment = experiments.get(i - 1);
+            for (int capacity = 0; capacity <= MAX_WEIGHT; capacity++) {
+                dp[i][capacity] = dp[i - 1][capacity];
+                if (experiment.getWeight() <= capacity) {
+                    int take = experiment.getRating()
+                            + dp[i - 1][capacity - experiment.getWeight()];
+                    dp[i][capacity] = Math.max(dp[i][capacity], take);
+                }
+            }
+        }
+
+        List<Experiment> selected = new ArrayList<>();
+        int capacity = MAX_WEIGHT;
+        for (int i = n; i > 0; i--) {
+            if (dp[i][capacity] != dp[i - 1][capacity]) {
+                Experiment experiment = experiments.get(i - 1);
+                selected.add(experiment);
+                capacity -= experiment.getWeight();
+            }
+        }
+
+        Collections.reverse(selected);
+        return new Payload(selected);
     }
 
     public record Payload(List<Experiment> experiments) {
