@@ -55,16 +55,16 @@ ID Task Owner Due Date
 Owner: Dayanna Porta
 
 Correctness checks / tests to run
-- Expected results come from an independent script that checks all 4,096 subsets, so a passing test is real evidence.
+- Expected results come from an independent script that checks all 4,096 subsets.
 - Greedy tests (highest rating first, lightest first, best rating-to-weight ratio): expected experiments, total weight, and total rating, always within the 700 kg limit.
-- Brute-force tests: the optimal subset (rating 53, 692 kg) and the top three valid subsets, with ties broken in favor of the lighter set.
-- Comparison summary: prints the three greedy results and the optimum, and names the same results shown in the tests above.
-- Edge cases: capacity 0, 6, 7, 653, 654, and 1,309 kg, plus rating ties (experiment 10 before 2).
-- General checks: weight never exceeds capacity, no experiment is repeated, and totals equal the sum of the chosen experiments.
-- Regression: all earlier tests are re-run after the Week 3 Change Request.
-- Evidence: results log with date, result, and a link to a commit, PR, or console output file.
-- Status: test plan drafted; tests not run yet (code in progress).
-Full plan: Test and Verification Plan.docx
+- Tie rule: equal priorities keep the original experiment table order (same as the implementation).
+- Brute-force tests: the optimal subset (rating 53, 692 kg) and the top three valid subsets (ranked by rating, then by lighter weight).
+- Comparison summary: no greedy strategy matches the optimum; highest rating first is lowest (35).
+- Edge cases: ties at ratings 9 and 8 for highest rating first, and general validity (weight within capacity, no repeated experiments, correct totals).
+- Regression: all tests are re-run after the Week 3 Change Request.
+- Evidence: results log with date, result, and a pointer to the commit.
+- Status: all planned tests run on 2026-11-08 and passed (greedy, brute force, comparison, and the team's JUnit tests).
+Full plan: docs/Test_and_Verification_Plan.docx
 
 
   7) Risks / Blockers
