@@ -19,13 +19,13 @@ the sum of their ratings. An experiment may be selected once or not at all.
 |---|---|
 | `Main` | Run the strategies and print payloads and comparison results. |
 | `routines.Experiment` | Store an immutable name, weight, and rating. |
-| `routines.PayloadOptimizer` | Store the source table and perform greedy and exhaustive searches. |
+| `routines.PayloadOptimizer` | Store the source table and perform greedy, exhaustive, and DP searches. |
 | `PayloadOptimizer.Payload` | Store an immutable selection and calculate its totals. |
 | `PayloadOptimizer.ExhaustiveResult` | Store the subset count and the top three valid payloads. |
 
 ## 1. `Main`
 
-### `main(args)` — Coordinate all three assignment parts
+### `main(args)` — Coordinate the three required parts and DP extra credit
 
 The command-line arguments are unused. Each greedy strategy starts with the
 same experiment table, not the previous strategy's selected items.
@@ -53,7 +53,9 @@ PROCEDURE main(args)
         CALL printPayload(strategyNames[index], greedyPayloads[index])
     END FOR
 
+    bruteForceStart ← CURRENT MONOTONIC TIME
     search ← optimizer.exhaustiveSearch()
+    bruteForceElapsed ← CURRENT MONOTONIC TIME - bruteForceStart
     PRINT "PART 2 - BRUTE FORCE / EXHAUSTIVE SEARCH"
     PRINT search.subsetsExamined
     PRINT explanation of rating, weight, and subset-mask ordering
@@ -67,6 +69,30 @@ PROCEDURE main(args)
 
     optimal ← search.topPayloads[0]
     CALL printComparison(strategyNames, greedyPayloads, optimal)
+    CALL printDynamicProgramming(optimizer, optimal, bruteForceElapsed)
+END PROCEDURE
+```
+
+### `printDynamicProgramming(optimizer, optimal, bruteForceElapsed)`
+
+The final payload is displayed instead of dumping the whole DP table. Timings
+cover algorithm execution, not console output, and are single-run observations.
+
+```text
+PROCEDURE printDynamicProgramming(optimizer, optimal, bruteForceElapsed)
+    dpStart ← CURRENT MONOTONIC TIME
+    dpPayload ← optimizer.dynamicProgramming()
+    dpElapsed ← CURRENT MONOTONIC TIME - dpStart
+
+    PRINT "PART 4 - DYNAMIC PROGRAMMING"
+    CALL printPayload("DP Optimal", dpPayload)
+    PRINT whether dpPayload.totalRating() = optimal.totalRating()
+    PRINT table dimensions (number of experiments + 1) BY (MAX_WEIGHT + 1)
+    PRINT number of experiments × (MAX_WEIGHT + 1) cells filled after the base row
+    PRINT bruteForceElapsed and dpElapsed converted to milliseconds
+    PRINT caveat: JVM warm-up and system load affect single-run timings
+    PRINT DP and brute-force runtime and code-complexity comparison
+    PRINT that DP returns one optimum while brute force supplies the top three
 END PROCEDURE
 ```
 
@@ -242,7 +268,9 @@ FUNCTION exhaustiveSearch()
         END FOR
 
         payload ← NEW Payload(selected)
-        IF payload.totalWeight() ≤ MAX_WEIGHT
+        totalWeight ← payload.totalWeight()
+        COMPUTE payload.totalRating() even if the subset is overweight
+        IF totalWeight ≤ MAX_WEIGHT
             APPEND payload TO validPayloads
         END IF
     END FOR
@@ -260,6 +288,63 @@ END FUNCTION
 Higher rating is the objective; lighter weight only breaks rating ties. Since
 masks are visited in ascending order, stable sorting also preserves ascending
 mask order when both totals tie. The first returned payload is optimal.
+
+### `dynamicProgramming()` — Exact 0/1 knapsack solution
+
+`dp[i][capacity]` is the best total rating achievable using the first `i`
+experiments within that weight limit. All cells initially contain zero. Reading
+the previous row for both choices ensures that each experiment is used at most
+once. This method optimizes rating only; ties skip the current experiment, rather
+than applying exhaustive search's minimum-weight tie-breaker.
+
+```text
+FUNCTION dynamicProgramming()
+    n ← length(experiments)
+    dp ← ZERO-FILLED TABLE WITH (n + 1) ROWS AND (MAX_WEIGHT + 1) COLUMNS
+
+    FOR i FROM 1 THROUGH n
+        experiment ← experiments[i - 1]
+        FOR capacity FROM 0 THROUGH MAX_WEIGHT
+            dp[i][capacity] ← dp[i - 1][capacity]  // Skip the current item
+            IF experiment.getWeight() ≤ capacity
+                take ← experiment.getRating()
+                        + dp[i - 1][capacity - experiment.getWeight()]
+                dp[i][capacity] ← MAXIMUM(dp[i][capacity], take)
+            END IF
+        END FOR
+    END FOR
+
+    selected ← EMPTY LIST
+    capacity ← MAX_WEIGHT
+    FOR i FROM n DOWN THROUGH 1
+        IF dp[i][capacity] ≠ dp[i - 1][capacity]
+            experiment ← experiments[i - 1]
+            APPEND experiment TO selected
+            capacity ← capacity - experiment.getWeight()
+        END IF
+    END FOR
+    REVERSE selected TO RESTORE SOURCE-TABLE ORDER
+    RETURN NEW Payload(selected)
+END FUNCTION
+```
+
+The optimum rating is `dp[n][700]`. Traceback reconstructs the selected subset;
+unused capacity is allowed. For this integer-weight problem, DP is **exact**.
+
+#### Runtime and Code Complexity Compared with Brute Force
+
+- **DP:** O(n × W) time and space, plus O(n) traceback. The current table has
+  13 × 701 cells, with 8,412 cells filled after its zero-initialized base row.
+  Implementation requires table indexing, a recurrence, and reconstruction.
+- **Brute force:** O(n × 2^n) enumeration and O(v log(v) × n) ranking of `v`
+  valid subsets in the current implementation. Subset logic is simpler, but
+  the search grows exponentially with the number of experiments.
+- DP scales better in `n` when integer capacity `W` is moderate. It is
+  pseudo-polynomial: a very large numeric capacity can still be expensive.
+- Printed elapsed times vary by JVM warm-up and machine load; they are not
+  controlled benchmarks or a guarantee that DP always runs faster.
+- Keep exhaustive search for the required top-three subsets. This DP method
+  reconstructs only one optimum, not the top three.
 
 ## 4. Nested Result Records
 
@@ -326,7 +411,9 @@ END RECORD
 | Exhaustive rank 1 — optimal | 692 | 53 |
 | Exhaustive rank 2 | 654 | 52 |
 | Exhaustive rank 3 | 677 | 51 |
+| Dynamic Programming — optimal | 692 | 53 |
 
 None of the three greedy strategies matches the optimal rating with the current
-tie rules. These results summarize the implementation; they are not hard-coded
-answers used by the algorithms.
+tie rules. DP matches the brute-force optimal rating of 53 and selects the same
+subset for this table. These results summarize the implementation; they are not
+hard-coded answers used by the algorithms.

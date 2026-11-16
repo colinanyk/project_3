@@ -28,7 +28,9 @@ public class Main {
             printPayload(strategyNames.get(index), greedyPayloads.get(index));
         }
 
+        long bruteForceStart = System.nanoTime();
         ExhaustiveResult search = optimizer.exhaustiveSearch();
+        long bruteForceNanos = System.nanoTime() - bruteForceStart;
         System.out.println("\nPART 2 - BRUTE FORCE / EXHAUSTIVE SEARCH");
         System.out.printf("Subsets examined: %,d (including the empty subset)%n",
                 search.subsetsExamined());
@@ -39,6 +41,31 @@ public class Main {
         }
 
         printComparison(strategyNames, greedyPayloads, search.topPayloads().getFirst());
+        printDynamicProgramming(optimizer, search.topPayloads().getFirst(), bruteForceNanos);
+    }
+
+    private static void printDynamicProgramming(PayloadOptimizer optimizer, Payload optimal,
+                                                long bruteForceNanos) {
+        long dpStart = System.nanoTime();
+        Payload dpPayload = optimizer.dynamicProgramming();
+        long dpNanos = System.nanoTime() - dpStart;
+
+        System.out.println("\nPART 4 - DYNAMIC PROGRAMMING");
+        printPayload("DP Optimal", dpPayload);
+        System.out.println("DP matches brute-force optimal rating: "
+                + (dpPayload.totalRating() == optimal.totalRating()));
+        System.out.printf("DP table: %d rows x %d columns; %,d cells filled after the base row.%n",
+                optimizer.getExperiments().size() + 1, PayloadOptimizer.getMaxWeight() + 1,
+                optimizer.getExperiments().size() * (PayloadOptimizer.getMaxWeight() + 1));
+        System.out.printf("Observed algorithm runtime (one run): brute force %.3f ms | DP %.3f ms%n",
+                bruteForceNanos / 1_000_000.0, dpNanos / 1_000_000.0);
+        System.out.println("Timings vary with JVM warm-up and system load; these are not benchmarks.");
+        System.out.println("DP: O(n * W) time and space; table filling plus subset traceback.");
+        System.out.println("Brute force: O(n * 2^n) enumeration plus O(v * log(v) * n) ranking.");
+        System.out.println("n = experiments, W = capacity in kg, v = valid subsets.");
+        System.out.println("DP needs table indexing and reconstruction; brute-force subset logic is simpler.");
+        System.out.println("DP avoids exponential growth in n when W is moderate, but is pseudo-polynomial in W.");
+        System.out.println("DP returns one optimum; brute force remains necessary here for the top three subsets.");
     }
 
     private static void printPayload(String title, Payload payload) {

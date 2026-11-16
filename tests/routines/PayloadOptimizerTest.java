@@ -91,6 +91,28 @@ class PayloadOptimizerTest {
     }
 
     @Test
+    void dynamicProgrammingMatchesBruteForceOptimalRatingAndExpectedSubset() {
+        Payload dp = optimizer.dynamicProgramming();
+        Payload bruteForce = optimizer.exhaustiveSearch().topPayloads().getFirst();
+        assertEquals(bruteForce.totalRating(), dp.totalRating());
+        assertEquals(53, dp.totalRating());
+        assertEquals(692, dp.totalWeight());
+        assertEquals(List.of("Cloud Patterns", "Binary Stars", "Relativity", "Seed Viability",
+                "Mice Tumors", "Micrometeorites", "Cosmic Rays", "Yeast Fermentation"), names(dp));
+    }
+
+    @Test
+    void dynamicProgrammingIsRepeatableAndLeavesSourceDataUnchanged() {
+        List<Experiment> original = List.copyOf(optimizer.getExperiments());
+        Payload first = optimizer.dynamicProgramming();
+        optimizer.highestRatingFirst();
+        optimizer.exhaustiveSearch();
+        assertEquals(first, optimizer.dynamicProgramming());
+        assertEquals(original, optimizer.getExperiments());
+        assertThrows(UnsupportedOperationException.class, () -> first.experiments().clear());
+    }
+
+    @Test
     void topThreeAgreeWithIndependentRecursiveEnumeration() {
         List<Payload> allSubsets = new ArrayList<>();
         enumerateRecursively(0, new ArrayList<>(), allSubsets);
@@ -108,7 +130,7 @@ class PayloadOptimizerTest {
     void everyReturnedPayloadIsValid() {
         List<Payload> payloads = new ArrayList<>(optimizer.exhaustiveSearch().topPayloads());
         payloads.addAll(List.of(optimizer.highestRatingFirst(), optimizer.lightestFirst(),
-                optimizer.bestRatingToWeightRatioFirst()));
+                optimizer.bestRatingToWeightRatioFirst(), optimizer.dynamicProgramming()));
         for (Payload payload : payloads) {
             assertTrue(payload.totalWeight() <= 700);
             assertEquals(payload.experiments().size(), new HashSet<>(payload.experiments()).size());
