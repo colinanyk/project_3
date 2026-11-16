@@ -1,11 +1,16 @@
 # Programming Project 3 — Pseudocode
 
+> **Original 12-experiment run (historical).** The application now uses the
+> for current rules, evaluator, greedy deferral, exhaustive search, grouped DP,
+> verified results, and test evidence. The pseudocode and totals below describe
+> the pre-revision implementation, not the current executable.
+
 **Team:** CADD  
 **Members:** Colin Nykanen, Anna Le, David Arreola, Dayanna Porta Ayllon  
 **Course:** CS 2430, section not specified (fill in before submission)  
 **Project:** Programming Project 3 – Fall 2026
 
-This document describes the current implementation in `src/Main.java`,
+This document describes the original implementation in `src/Main.java`,
 `src/routines/Experiment.java`, and `src/routines/PayloadOptimizer.java`.
 The pseudocode is language-independent; names match the Java methods.
 Lists use zero-based indexing, and `FOR EACH` visits items in list order.
